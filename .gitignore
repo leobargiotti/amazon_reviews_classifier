@@ -3,5 +3,4 @@ figure/
 other_code/
 .idea/
 dataset/Product_Reviews/original
-dataset/Product_Reviews/new/train.csv
 models_saved
