@@ -2,4 +2,5 @@ documentation/
 figure/
 other_code/
 .idea/
-dataset/Product_Reviews/original
+models_saved/TfidfMultinomialNB_old.pk
+models_saved/TfidfLogReg_old.pk
