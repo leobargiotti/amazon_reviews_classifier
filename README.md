@@ -92,4 +92,3 @@ This application has these following buttons:
 The image below is the home of application:
 
 ![application_home](img/app_home.png)
-# amazon_reviews_classifier
