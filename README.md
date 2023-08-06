@@ -35,7 +35,7 @@ The dataset used to train and test the correct behavior of the application:
 
 * Accuracy:
   - MultinomialNB = 0.86
-  - LogisticRegression = 0.90
+  - LogisticRegression = 0.89
   - Bart = 0.86
   - DeBERTa = 0.88
 
