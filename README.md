@@ -41,7 +41,7 @@ The dataset used to train and test the correct behavior of the application:
 
 ## Dependencies
 
-News Classifier needs the following libraries:
+Amazon Reviews Classifier needs the following libraries:
 - <a href="https://libraries.io/pypi/contractions/0.1.73">Contractions</a>
 - <a href="https://libraries.io/pypi/customtkinter/5.0.3">Customtkinter</a>
 - <a href="https://pypi.org/project/dill/">Dill</a>
