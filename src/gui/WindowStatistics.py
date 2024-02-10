@@ -6,17 +6,16 @@ from statistic.Statistics import Statistics
 
 
 class WindowStatistics(customtkinter.CTk):
-
     def __init__(self, parentWindow):
         super().__init__()
 
         self.parentWindow = parentWindow
 
         self.statistic_classifiers = [Statistics(classifier, classifier.config_file) for classifier in
-                                      self.parentWindow.classifiers[:-2]]
+                                      self.parentWindow.classifiers[:-1]]
 
         self.statistic_pretrained_classifiers = [Statistics(classifier, classifier.config_file) for classifier in
-                                                 self.parentWindow.classifiers[2:]]
+                                                 self.parentWindow.classifiers[1:]]
 
         self.number_classifiers = len(self.statistic_classifiers)
 
@@ -31,17 +30,17 @@ class WindowStatistics(customtkinter.CTk):
         self.button_dataset = []
 
         self.text_dataset = ["Class Distribution Training Set", "Class Distribution Test Set",
-                             "Information on Dataset", "Statistics on words in Dataset",
                              "WordCloud on Training Set", "WordCloud on Test Set",
-                             "Top 20 Words in Training Set", "Top 20 Words in Test Set"]
+                             "Top 20 Words in Training Set", "Top 20 Words in Test Set",
+                             "Information on Dataset"]
 
         self.button_event_dataset = [partial(self.button_event_class_distribution, "train_original", "train_cleaned"),
                                      partial(self.button_event_class_distribution, "test_original", "test_cleaned"),
-                                     self.button_event_information, self.button_event_statistics,
                                      partial(self.button_event_wordcloud, "X_train", "training"),
                                      partial(self.button_event_wordcloud, "X_test", "test"),
                                      partial(self.button_event_top20, "X_train", "training"),
-                                     partial(self.button_event_top20, "X_test", "test")]
+                                     partial(self.button_event_top20, "X_test", "test"),
+                                     self.button_event_information]
 
         self.label_dataset = customtkinter.CTkLabel(master=self.frame_statistics,
                                                     text="Statistics on Dataset:",
@@ -81,14 +80,12 @@ class WindowStatistics(customtkinter.CTk):
             self.button_classifier[index].grid(row=9 + n_row, column=n_column, pady=20, padx=20, sticky="we")
 
         # ========== CLASSIFIER PRETRAINED
-
         self.label_dataset = customtkinter.CTkLabel(master=self.frame_statistics,
                                                     text="Statistics on Pretrained Classifiers:",
                                                     font=("Roboto Medium", -15))
         self.label_dataset.grid(row=19, column=0, pady=10, padx=10)
 
-        self.text_pretrained_classifier = ["Classification Report Config. 3", "Classification Report Config. 4",
-                                           "Confusion Matrix Config. 3", "Confusion Matrix Config. 4"]
+        self.text_pretrained_classifier = ["Classification Report Config. 2",  "Confusion Matrix Config. 2"]
 
         button_event_pretrained_classifier = [self.button_cr, self.button_cm]
 
@@ -98,10 +95,13 @@ class WindowStatistics(customtkinter.CTk):
             n_row = int(index / self.number_classifiers)
             n_column = index % self.number_classifiers
             self.button_pretrained_classifier.append(customtkinter.CTkButton(master=self.frame_statistics,
-                                                                             text=self.text_pretrained_classifier[index],
+                                                                             text=self.text_pretrained_classifier[
+                                                                                 index],
                                                                              border_width=2,
                                                                              fg_color=None,
-                                                                             command=partial(button_event_pretrained_classifier[n_row], n_column)))
+                                                                             command=partial(
+                                                                                 button_event_pretrained_classifier[
+                                                                                     n_row], n_column)))
             self.button_pretrained_classifier[index].grid(row=20 + n_row, column=n_column, pady=20, padx=20,
                                                           sticky="we")
 
@@ -143,8 +143,7 @@ class WindowStatistics(customtkinter.CTk):
                                                 font=("Courier", 14))
         window.label_1.grid(row=0, column=1, pady=10, padx=10)
 
-    # DATASET
-
+    # SHOW STATISTICS ON DATASET
     def button_event_class_distribution(self, data_original, data_cleaned):
         """
         Method to display class distribution statistic of training set
@@ -170,12 +169,6 @@ class WindowStatistics(customtkinter.CTk):
         """
         self.statistic_classifiers[0].wordcloud(getattr(self.statistic_classifiers[0].classifier, data), data_title)
 
-    def button_event_statistics(self):
-        """
-        Method to display same statistics on dataset
-        """
-        self.create_toplevel(self.statistic_classifiers[0].statistics(), "Statistics on words in Dataset")
-
     def button_event_top20(self, data, data_title):
         """
         Method to display 20 most frequent words
@@ -184,8 +177,7 @@ class WindowStatistics(customtkinter.CTk):
         """
         self.statistic_classifiers[0].show_top20(getattr(self.statistic_classifiers[0].classifier, data), data_title)
 
-    # CLASSIFIER
-
+    # SHOW STATISTICS ON CLASSIFIER
     def button_event_class_report(self, index):
         """
         Method to display classification report of classifier in position of index
@@ -201,8 +193,7 @@ class WindowStatistics(customtkinter.CTk):
         """
         self.statistic_classifiers[index].confusion_matrix("Confusion Matrix Config. " + str(index + 1))
 
-    # PRETRAINED CLASSIFIER
-
+    # SHOW STATISTICS ON PRETRAINED CLASSIFIER
     def button_cr(self, index):
         """
         Method to display classification report of classifier in position of index
@@ -224,3 +215,4 @@ class WindowStatistics(customtkinter.CTk):
         """
         self.parentWindow.windows[0] = None
         self.destroy()
+

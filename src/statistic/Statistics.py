@@ -1,10 +1,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import texthero as hero
 import seaborn as sns
 from sklearn.metrics import ConfusionMatrixDisplay, classification_report, confusion_matrix
+from wordcloud import WordCloud
+from collections import Counter
+import string
 from yellowbrick.classifier import ClassPredictionError
+from matplotlib.colors import LinearSegmentedColormap as lsg
+
 
 class Statistics:
 
@@ -27,7 +31,8 @@ class Statistics:
             sns.countplot(x=self.column_target, data=data_original if index == 0 else data_cleaned, ax=axes[index])
             axes[index].set_xticklabels(self.classes_array)
             axes[index].tick_params(axis='x', labelrotation=90)
-            axes[index].set_title(('Before' if index == 0 else 'After') + ' removal of tuples with NaN and duplicated values')
+            axes[index].set_title(
+                ('Before' if index == 0 else 'After') + ' removal of tuples with NaN and duplicated values')
         plt.show()
 
     def calculate_information(self):
@@ -86,7 +91,8 @@ class Statistics:
                   print_class_distribution("training", train_cleaned) + print_class_distribution("test", test_cleaned) + \
                   print_nan("training", train_cleaned) + print_nan("test", test_cleaned) + \
                   print_duplicate("training", train_cleaned) + print_duplicate("test", test_cleaned) + \
-                  print_number_row("training", self.classifier.X_train) + print_number_row("test", self.classifier.X_test)
+                  print_number_row("training", self.classifier.X_train) + print_number_row("test",
+                                                                                           self.classifier.X_test)
         return column0, column1
 
     def wordcloud(self, data, data_text):
@@ -95,9 +101,22 @@ class Statistics:
         :param data: dataframe
         :param data_text: string (training or test)
         """
-        hero.visualization.wordcloud(self.classifier.model[0].transform(data), width=800, height=800,
-                                     background_color='black', contour_color='black', colormap='viridis',
-                                     return_figure=True)
+        wordcloud = WordCloud(
+            width=800,
+            height=800,
+            max_words=200,
+            mask=None,
+            contour_width=0,
+            contour_color="black",
+            min_font_size=4,
+            background_color="black",
+            max_font_size=None,
+            relative_scaling="auto",
+            colormap="viridis").generate_from_frequencies(dict(Counter(
+                self.classifier.model[0].transform(data).str.cat(sep=" ").split())))
+        fig, ax = plt.subplots(figsize=(20, 10))
+        ax.imshow(wordcloud, interpolation="bilinear")
+        ax.axis("off")
         plt.title("Wordcloud on " + data_text + " set")
         plt.show()
 
@@ -108,25 +127,13 @@ class Statistics:
         :param data_text: string (training or test)
         """
         NUM_TOP_WORDS = 20
-        top_20 = hero.visualization.top_words(self.classifier.model[0].transform(data)).head(NUM_TOP_WORDS)
+        pattern = (
+            rf"((\w)[{string.punctuation}](?:\B|$)|(?:^|\B)[{string.punctuation}](\w))"
+        )
+        top_20 = (self.classifier.model[0].transform(data)
+                  .str.replace(pattern, r"\2 \3").str.split().explode().value_counts(False)).head(NUM_TOP_WORDS)
         top_20.plot.bar(rot=90, title="Top 20 words in " + data_text + " set", figsize=(12, 7))
         plt.show()
-
-    def statistics(self):
-        """
-        Method to display most relevant words for Multinomial classifier and top words in training and test set
-        """
-        most_frequent_words_train = hero.top_words(self.classifier.model[0].transform(self.classifier.X_train))[:15]
-        most_frequent_words_test = hero.top_words(self.classifier.model[0].transform(self.classifier.X_test))[:15]
-        feature_names = self.classifier.model[1].get_feature_names_out()
-        str_top10 = ""
-        for i, classes in enumerate(self.classes_array):
-            top10 = np.argsort(self.classifier.model[2].best_estimator_.feature_log_prob_[i])[-10:]
-            str_top10 = str_top10 + "\n" + str(classes).upper() + "\n" + str(" ".join(feature_names[top10]))
-
-        return "The most frequents words in training set are: \n" + str(most_frequent_words_train) + "\n\n" + \
-               "The most frequents words in test set are: \n" + str(most_frequent_words_test) + "\n\n" + \
-               "The most relevant words for MultinomialNB classifier for each class are: " + str_top10
 
     # ----------CLASSIFIER------------
 
@@ -138,7 +145,8 @@ class Statistics:
         return classification_report(self.classifier.y_test, self.classifier.model.predict(self.classifier.X_test),
                                      target_names=self.classes_array) + "\n\n" + 'Final Training Accuracy: ' + \
             "%.2f" % (self.classifier.model.score(self.classifier.X_train, self.classifier.y_train) * 100) + '%\n' + \
-            'Model Accuracy: ' + "%.2f" % (self.classifier.model.score(self.classifier.X_test, self.classifier.y_test) * 100) + '%'
+            'Model Accuracy: ' + "%.2f" % (
+                    self.classifier.model.score(self.classifier.X_test, self.classifier.y_test) * 100) + '%'
 
     def confusion_matrix(self, title):
         """
@@ -162,8 +170,10 @@ class Statistics:
         :return: string about classification report, training and test accuracy
         """
         predicted_labels = []
-        if limit_row is None: limit_row = len(self.classifier.y_testlimit_row)
-        else: limit_row = limit_row
+        if limit_row is None:
+            limit_row = len(self.classifier.y_testlimit_row)
+        else:
+            limit_row = limit_row
         for row in self.classifier.X_test.head(limit_row):
             predicted_labels.append(self.classifier.model(row, candidate_labels=self.classes_array)['labels'][0])
         return classification_report(self.classifier.y_test.head(limit_row),
@@ -177,12 +187,15 @@ class Statistics:
         :param limit_row: integer to specify the number row to use to test, if it
         is not specify it is the entire test set
         """
-        if limit_row is None: limit_row = len(self.classifier.y_testlimit_row)
-        else: limit_row = limit_row
+        if limit_row is None:
+            limit_row = len(self.classifier.y_testlimit_row)
+        else:
+            limit_row = limit_row
         predicted_labels = []
         for row in self.classifier.X_test.head(limit_row):
             predicted_labels.append(self.classifier.model(row, candidate_labels=self.classes_array)['labels'][0])
-        predicted_label = np.vectorize({val: key for (key, val) in self.classifier.classes.items()}.get)(predicted_labels)
+        predicted_label = np.vectorize({val: key for (key, val) in self.classifier.classes.items()}.get)(
+            predicted_labels)
         true_label = self.classifier.y_test.head(limit_row)
         labels = sorted(set(true_label) | set(predicted_label))
         plt.figure(figsize=(10, 7))

@@ -1,10 +1,11 @@
-from texthero import preprocessing as ppe
-import texthero as hero
 import contractions
 from sklearn.base import BaseEstimator, TransformerMixin
 from simplemma import lemmatize
 import pycountry
 import nltk
+import re
+import unicodedata
+from nltk.stem import SnowballStemmer
 
 
 class PreprocessingSteps:
@@ -27,7 +28,7 @@ class PreprocessingSteps:
         Method to remove html tags
         :return: itself (PreprocessingSteps)
         """
-        self.X = ppe.remove_html_tags(self.X)
+        self.X = self.X.apply(lambda x: re.sub(r'<.*?>', '', x))
         return self
 
     def remove_urls(self):
@@ -35,7 +36,7 @@ class PreprocessingSteps:
         Method to remove urls
         :return: itself (PreprocessingSteps)
         """
-        self.X = hero.replace_urls(self.X, " ")
+        self.X = self.X.apply(lambda x: re.sub(r'http\S+', '', x))
         return self
 
     def remove_punctuation(self):
@@ -43,8 +44,7 @@ class PreprocessingSteps:
         Method to remove punctuation
         :return: itself (PreprocessingSteps)
         """
-        self.X = ppe.remove_punctuation(self.X)
-        for i in ["\\", "<", ">", "'", "-", '"']: self.X = self.X.apply(lambda x: x.replace(i, " "))
+        self.X = self.X.apply(lambda x: re.sub(r'\W+', ' ', x))
         return self
 
     def remove_diacritics(self):
@@ -52,7 +52,7 @@ class PreprocessingSteps:
         Method to remove diacritics
         :return: itself (PreprocessingSteps)
         """
-        self.X = ppe.remove_diacritics(self.X)
+        self.X = self.X.apply(lambda x: unicodedata.normalize('NFKD', x).encode('ascii', 'ignore').decode('utf-8'))
         return self
 
     def lowercase(self):
@@ -60,7 +60,7 @@ class PreprocessingSteps:
         Method to lowercase
         :return: itself (PreprocessingSteps)
         """
-        self.X = ppe.lowercase(self.X)
+        self.X = self.X.apply(lambda x: x.lower())
         return self
 
     def remove_digits(self):
@@ -68,7 +68,7 @@ class PreprocessingSteps:
         Method to remove digits
         :return: itself (PreprocessingSteps)
         """
-        self.X = hero.remove_digits(self.X, only_blocks=False)
+        self.X = self.X.apply(lambda x: re.sub(r'\d+', '', x))
         return self
 
     def remove_extra_whitespace(self):
@@ -76,7 +76,7 @@ class PreprocessingSteps:
         Method to remove extra whitespace
         :return: itself (PreprocessingSteps)
         """
-        self.X = hero.remove_whitespace(self.X)
+        self.X = self.X.apply(lambda x: ' '.join(x.split()))
         return self
 
     def remove_stopwords(self):
@@ -84,7 +84,8 @@ class PreprocessingSteps:
         Method to remove stopwords
         :return: itself (PreprocessingSteps)
         """
-        self.X = hero.remove_stopwords(self.X, self.stopwords)
+        self.X = self.X.apply(
+            lambda x: ' '.join([word for word in nltk.word_tokenize(str(x)) if word not in self.stopwords]))
         return self
 
     def stem(self):
@@ -92,7 +93,7 @@ class PreprocessingSteps:
         Method to perform stemming
         :return: itself (PreprocessingSteps)
         """
-        self.X = ppe.stem(self.X, language=self.language, stem='snowball')
+        self.X = self.X.apply(lambda x: ' '.join([SnowballStemmer(self.language).stem(word) for word in nltk.word_tokenize(str(x))]))
         return self
 
     def lemma(self):

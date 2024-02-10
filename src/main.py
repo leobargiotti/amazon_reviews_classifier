@@ -1,11 +1,9 @@
 import os
 
 from gui.WindowHome import WindowHome
-from utils.utils import download_if_non_existent
-from classifier.ClassifierTfidfMultinomialNB import ClassifierTfidfMultinomialNB
 from classifier.ClassifierTfidfLogReg import ClassifierTfidfLogReg
-from classifier.ClassifierBART import ClassifierBART
 from classifier.ClassifierDeberta import ClassifierDeberta
+from utils.utils import download_if_non_existent
 
 if __name__ == '__main__':
     """
@@ -18,7 +16,6 @@ if __name__ == '__main__':
 
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-    app = WindowHome([ClassifierTfidfMultinomialNB(),  ClassifierTfidfLogReg(), ClassifierBART(), ClassifierDeberta()],
-                     ["TfidfVectorizer\n- MultinomialNB", "TfidfVectorizer\n- LogisticRegression", "Bart", "Deberta"])
-
+    app = WindowHome([ClassifierTfidfLogReg(), ClassifierDeberta()],
+                     ["TfidfVectorizer\n- LogisticRegression", "Deberta"])
     app.mainloop()

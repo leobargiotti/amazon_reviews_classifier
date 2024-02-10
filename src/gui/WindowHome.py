@@ -124,7 +124,7 @@ class WindowHome(customtkinter.CTk):
         :param index: integer value of index corresponding to the window
         """
         if self.windows[index] is None:
-            self.windows[index] = WindowStatistics(self) if index == 0 else None
+            self.windows[index] = WindowStatistics(self)
             self.windows[index].mainloop()
 
     @staticmethod
