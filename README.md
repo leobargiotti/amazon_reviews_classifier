@@ -33,28 +33,10 @@ The dataset used to train and test the correct behavior of the application:
 ## Models Evaluations
 
 * Accuracy:
-  - MultinomialNB = 0.86
   - LogisticRegression = 0.89
-  - Bart = 0.86
   - DeBERTa = 0.88
 
 ## Dependencies
-
-Amazon Reviews Classifier needs the following libraries:
-- <a href="https://libraries.io/pypi/contractions/0.1.73">Contractions</a>
-- <a href="https://libraries.io/pypi/customtkinter/5.0.3">Customtkinter</a>
-- <a href="https://pypi.org/project/dill/">Dill</a>
-- <a href="https://matplotlib.org">Matplotlib</a>
-- <a href="https://www.nltk.org">NLTK</a>
-- <a href="https://numpy.org/">NumPy</a>
-- <a href="https://pandas.pydata.org/">Pandas</a>
-- <a href="https://pypi.org/project/pycountry/">Pycountry</a>
-- <a href="https://scikit-learn.org/stable/">SKLearn</a>
-- <a href="https://seaborn.pydata.org">Seaborn</a>
-- <a href="https://pypi.org/project/simplemma/">Simplemma</a>
-- <a href="https://texthero.org">Texthero</a>
-- <a href="https://huggingface.co/docs/transformers/installation">Transformers</a>
-- <a href="https://www.scikit-yb.org/en/latest/">Yellowbrick</a>
 
 [Here](requirements.txt) is present the file with all dependencies of the project.
 

@@ -200,14 +200,14 @@ class WindowStatistics(customtkinter.CTk):
         :param index: integer value of index corresponding to the pretrained classifier
         """
         self.create_toplevel(self.statistic_pretrained_classifiers[index].class_report(1000),
-                             "Classification Report Configuration " + str(index + 3))
+                             "Classification Report Configuration " + str(index + 2))
 
     def button_cm(self, index):
         """
         Method to display confusion matrix of classifier in position of index
         :param index: integer value of index corresponding to the pretrained classifier
         """
-        self.statistic_pretrained_classifiers[index].cm("Confusion Matrix Config. " + str(index + 3), 1000)
+        self.statistic_pretrained_classifiers[index].cm("Confusion Matrix Config. " + str(index + 2), 1000)
 
     def on_closing(self):
         """
