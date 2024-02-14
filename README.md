@@ -52,9 +52,7 @@ In your terminal while in this repo directory, run the following commands to use
 or
 > `python src/main.py`
 
-In [the file main](/src/main.py) is possible to set which classifiers you want use.
-
-This application has these following buttons:
+This application has these following features:
 * Classify
   * Calculates predicted class and its probability of the news written in textbox for each classifier.
 * Statistics
