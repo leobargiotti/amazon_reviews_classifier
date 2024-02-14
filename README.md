@@ -21,8 +21,6 @@ The process to classify the text has composed by three steps:
    loads them from the folder. Otherwise, application fits and save models when the dataset changes. 
 
 ### Pre-trained Classifiers
-Two different NLI models, in particular they are:
-* <a href="https://huggingface.co/facebook/bart-large-mnli">facebook/bart-large-mnli</a>
 * <a href="https://huggingface.co/MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli">MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli</a>
 
 ## Data
